@@ -1,0 +1,34 @@
+
+  .container {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .form-container {
+    width: 25rem;
+    margin-top: 1rem;
+    line-height: 2.5;
+  }
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    float: right;
+    line-height: 3;
+    margin-right: 2rem;
+  }
+  
+  .input-container input {
+    padding: 5px;
+  }
+  
+  .input-container select {
+    width: 10rem;
+    padding: 5px;
+  }
+  
+  .label {
+    font-size: small;
+    /* width: 5rem; */
+  }
