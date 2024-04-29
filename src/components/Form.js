@@ -31,8 +31,8 @@ export default function App() {
           name: "input",
           value: "",
           type: "text",
-          placeholder: "Enter your Perivious Document Number",
-          label: "Perivious Document Number",
+          placeholder: "Enter your Previous Document Number",
+          label: "Previous Document Number",
           error: "",
         },
         {
@@ -158,6 +158,7 @@ export default function App() {
   ];
 
   const [data, setData] = useState([...formData]);
+  const [progress, setProgress] = useState(0);
 
   const handleListClick = (listID) => {
     const updatedList = data.map((list) =>
@@ -170,12 +171,17 @@ export default function App() {
   };
 
   const handleInputChange = (e, listId, itemId) => {
+    const text = e.target.value;
+    const textLength = text.length;
+    const newProgress = (textLength / 8) * 100;
+    setProgress(newProgress);
+
     const updatedData = data.map((list) => {
       if (list.id === listId) {
         const updatedList = {
           ...list,
           data: list.data.map((item) =>
-            item.id === itemId ? { ...item, value: e.target.value } : item
+            item.id === itemId ? { ...item, value: text } : item
           ),
         };
         return updatedList;
@@ -184,6 +190,16 @@ export default function App() {
     });
 
     setData(updatedData);
+  };
+
+  const getColor = () => {
+    if (progress < 30) {
+      return "red"; 
+    } else if (progress < 60) {
+      return "orange"; 
+    } else {
+      return "green"; 
+    }
   };
 
   const handleSelectChange = (e, listId, itemId) => {
@@ -205,68 +221,85 @@ export default function App() {
     setData(updatedData);
   };
 
-  console.log(data)
-
   return (
-    <div className="container">
-      <div className="form-container">
-        {data.map((list) => (
+    <>
+      <div className="progress-container">
+        <div className="progress-bar">
           <div
-            style={{
-              height: list.isShowDetails && list.data.length > 0 ? "25rem" : "",
-            }}
-            className="form-details"
-            key={list.id}
-          >
-            <span onClick={() => handleListClick(list.id)}>
-              {list.isShowDetails ? <FaCaretDown /> : <FaCaretRight />}
-              {list.type}
-            </span>
-            {list.isShowDetails &&
-              list.data.map((item) => (
-                <div key={item.id}>
-                  {item.name === "input" ? (
-                    <div className="input-container">
-                      <p className="label">{item.label}: </p>
-                      <input
-                        type={item.type}
-                        value={item.value}
-                        placeholder={item.placeholder}
-                        onChange={(e) => handleInputChange(e, list.id, item.id)}
-                      />
-                    </div>
-                  ) : item.name === "select" ? (
-                    <div className="input-container">
-                      <p className="label">{item.label}: </p>
-                      <select
-                        value={item.value}
-                        onChange={(e) =>
-                          handleSelectChange(e, list.id, item.id)
-                        }
-                      >
-                        {item.options.map((opt, idx) => (
-                          <option key={idx} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  ) : (
-                    <div className="input-container">
-                      <p className="label">{item.label}:</p>
-                      <input
-                        type={item.type}
-                        value={item.value}
-                        placeholder={item.placeholder}
-                        onChange={(e) => handleInputChange(e, list.id, item.id)}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-          </div>
-        ))}
+            className="progress-bar-fill"
+            style={{ width: `${progress}%`, backgroundColor: getColor() }}
+          ></div>
+        </div>
       </div>
-    </div>
+
+      <div className="container">
+        <div className="form-container">
+          {data.map((list) => (
+            <div
+              style={{
+                height:
+                  list.isShowDetails && list.data.length > 0 ? "25rem" : "",
+              }}
+              className="form-details"
+              key={list.id}
+            >
+              <span onClick={() => handleListClick(list.id)}>
+                {list.isShowDetails ? <FaCaretDown /> : <FaCaretRight />}
+                {list.type}
+              </span>
+              {list.isShowDetails &&
+                list.data.map((item) => (
+                  <div key={item.id}>
+                    {item.name === "input" ? (
+                      <div className="input-container">
+                        <p className="label">{item.label}: </p>
+                        <input
+                          type={item.type}
+                          maxLength={10}
+                          value={item.value}
+                          placeholder={item.placeholder}
+                          onChange={(e) =>
+                            handleInputChange(e, list.id, item.id)
+                          }
+                        />
+                      </div>
+                    ) : item.name === "select" ? (
+                      <div className="input-container">
+                        <p className="label">{item.label}: </p>
+                        <select
+                          value={item.value}
+                          onChange={(e) =>
+                            handleSelectChange(e, list.id, item.id)
+                          }
+                        >
+                          {item.options.map((opt, idx) => (
+                            <option key={idx} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="input-container">
+                        <p className="label">{item.label}:</p>
+                        <input
+                          type={item.type}
+                          value={item.value}
+                          maxLength={8}
+                          
+                          placeholder={item.placeholder}
+                          onChange={(e) =>
+                            handleInputChange(e, list.id, item.id)
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
